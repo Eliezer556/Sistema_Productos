@@ -1,1 +1,16 @@
-_pycache_/
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Django
+db.sqlite3
+/media/
+staticfiles/
+migrations/
+
+# Entornos virtuales
+venv/
+env/
+
+# Archivos de configuración
+*.env

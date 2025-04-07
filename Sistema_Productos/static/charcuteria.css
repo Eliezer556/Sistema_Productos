@@ -1,0 +1,9 @@
+/* .container {
+    background-color: blue;
+    height: 100vh;
+} */
+
+.custom-col {
+    background-color: white;
+    border-radius: 20px;
+}

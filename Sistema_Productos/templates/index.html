@@ -1,0 +1,67 @@
+{% extends "Cliente_sesion.html" %}
+{% load static %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            {% if cliente %}
+                                <span data-feather="sesion">Sesión de {{ cliente.name }} activa</span>
+                                <a class="nav-link active" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
+                            {% endif %}                           
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'index' %}">
+                                <span data-feather="home"></span>
+                                Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file"></span>
+                                Harinas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'Charcuteria' %}">
+                                <span data-feather="shopping-cart"></span>
+                                Charcuteria
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="users"></span>
+                                Verduras
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="bar-chart-2"></span>
+                                Chucherias
+                            </a>
+                        </li>
+                    </ul>
+                    <div id="cart" class="cart">
+                        <h2>Carrito de Compras</h2>
+                        <ul id="cart-items" class="list-group">
+                            
+                        </ul>
+                        <a href="{% url 'Pago_producto' %}" id="checkout" class="btn btn-success">Pagar producto</a>
+                        <button id="clear-car" class="btn btn-danger" >Vaciar carrito</button>
+                    </div>
+                </div>
+            </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {% block content %}
+                {% endblock  %}
+            </main>
+        </div>
+    </div>
+
+    {% comment %} carrito de compra {% endcomment %}
+{% endblock  %}
+
+    

@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content%}
+
+    <div class="content">
+        <h1 class="display-2 text-center fw-normal text-uppercase fs-1">metodo de pago</h1>
+        {% if metodo == 'tarjeta' %}
+            <div class="d-flex justify-content-center align-items-center">
+                <span class="fs-2">Por favor ingrese su tarjeta</span>
+                <img src="{% static 'img/tarjetaPago.jpg' %}" alt="" class="w-25">
+            </div>
+
+            <form method="POST" class="d-flex flex-column justify-content-center align-items-center" action="{% url "finalizarPago" %}">
+                {% csrf_token %}
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <label class="d-block fs-4">Ingresar cedula</label>
+                    <input class="input-cedula d-block mb-3" type="text" required>
+                </div>
+                <select id="tipo-cuenta" name="tipo_cuenta" class="form-select w-25" required>
+                    <option value="" disabled selected>Seleccione un tipo de cuenta</option>
+                    <option value="ahorro">Ahorro</option>
+                    <option value="corriente">Corriente</option>
+                </select>
+                <label for="">clave de la cuenta</label>
+                <input type="password" required>
+                <input type="hidden" id="carrito" name="carrito">
+                <button type="submit" class="btn btn-primary bg-dark">procesar pago</button>
+            </form>
+        {% elif metodo == 'pago_movil' %}
+            <p>Pago movil</p>
+        {% elif metodo == 'efectivo' %}
+            <p>Efectivo</p>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || {};
+            console.log('Carrito cargado desde localStorage:', carrito);
+            
+            const carritoInput = document.getElementById('carrito');
+            carritoInput.value = JSON.stringify(carrito); // Convierte el carrito a JSON y lo asigna al campo oculto
+        });
+    </script>
+
+{% endblock  %}
+
+
+

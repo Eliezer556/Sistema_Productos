@@ -1,0 +1,17 @@
+#sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    padding-top: 20px;
+    border-right: 1px solid #dee2e6;
+}
+
+#sidebar .nav-link {
+    color: #333;
+}
+
+#sidebar .nav-link.active {
+    color: #007bff;
+}
