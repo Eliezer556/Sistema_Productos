@@ -1,12 +1,60 @@
 {% extends "Cliente_Sesion.html" %}
 {% load static %}
 
-
 {% block main %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+            <h1 class="h3">Factura Generada</h1>
+        </div>
+        <div class="card-body">
+            <h3 class="text-uppercase">Detalles de la Factura</h3>
+            <div class="mb-4">
+                <p><strong>Cliente:</strong> {{ cliente.name }} {{ cliente.apellido }}</p>
+                <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+            </div>
 
-<h1>FACTURA GENERADA</h1>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in detalles %}
+                    <tr>
+                        <td>{{ detalle.producto.name }}</td>
+                        <td>{{ detalle.cantidad }}</td>
+                        <td>${{ detalle.precio_unitario }}</td>
+                        <td>${{ detalle.subtotal|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-{% endblock  %}
+            <div class="text-end mt-4">
+                <p><strong>Subtotal:</strong> ${{ subtotal|floatformat:2 }}</p>
+                <p><strong>IVA (16%):</strong> ${{ iva|floatformat:2 }}</p>
+                <p class="h5"><strong>Total:</strong> ${{ total|floatformat:2 }}</p>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button class="btn btn-success" onclick="window.location.href='/index';">Volver al Inicio</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Vaciar el carrito en localStorage
+    document.addEventListener('DOMContentLoaded', function () {
+        localStorage.removeItem('carrito');
+        console.log('Carrito reseteado');
+    });
+</script>
+{% endblock %}
 
 
 

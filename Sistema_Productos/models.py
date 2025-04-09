@@ -40,7 +40,7 @@ class Compra(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Compra {self.id} de {self.cliente.first_name} {self.cliente.last_name}"
+        return f"Compra {self.id} de {self.cliente.name} {self.cliente.apellido}"
     
     @property
     def precio_total(self):
@@ -54,7 +54,11 @@ class Compra_Detalle(models.Model):
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.cantidad} x {self.producto.nombre} en la compra {self.compra.id}"
+        return f"{self.cantidad} x {self.producto.name} en la compra {self.compra.id}"
+    
+    @property
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario
 
 
 class Materia_Prima(models.Model):

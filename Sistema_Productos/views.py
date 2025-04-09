@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from .models import Producto, Cliente, Compra, Compra_Detalle
+from .models import Producto, Cliente, Compra, Compra_Detalle, Materia_Prima, Categoria_Producto
 from django.http import HttpResponseRedirect
 import json
 from datetime import datetime
+from decimal import Decimal
 
 def Ingreso_Cliente(request):
     if request.method == 'POST':
@@ -83,14 +84,12 @@ def metodo_pago(request):
     return render(request, 'metodo_pago.html', {'metodo':metodo})
 
 def finalizarPago(request):
-
     if request.method == "POST":
         cliente_id = request.session.get('cliente_id')
         if not cliente_id:
             return HttpResponseRedirect('/')
         
         cliente = Cliente.objects.get(id=cliente_id)
-        # metodo = request.GET.get('metodo')
         print(request.POST)
         carrito_json = request.POST.get('carrito')
         print(f"Carrito JSON: {carrito_json}")
@@ -103,14 +102,13 @@ def finalizarPago(request):
         carrito = json.loads(carrito_json)
         print(f"Carrito procesado: {carrito}")
 
+        compra = Compra.objects.create(
+            cliente = cliente,
+            fecha = datetime.now()            
+        )
         
         for producto_id, producto_data in carrito.items():
             producto = Producto.objects.get(id=producto_id)
-
-            compra = Compra.objects.create(
-                cliente = cliente,
-                fecha = datetime.now()
-            )
 
             Compra_Detalle.objects.create(
                 compra = compra,
@@ -119,16 +117,50 @@ def finalizarPago(request):
                 precio_unitario = producto_data['precioUnitario']
             )
 
+            if producto.materia_prima:
+                cantidad_consumida = producto.cantidad_por_unidad * producto_data['cantidad']
+                materia_prima = producto.materia_prima
+                if materia_prima.cantidad_disponible >= cantidad_consumida:
+                    materia_prima.cantidad_disponible -= cantidad_consumida
+                    materia_prima.save()
+                else:
+                    print(f"NO hay materia prima")
+
+
         print('FACTURA GENERADA')
         return HttpResponseRedirect('/factura')  
 
     return HttpResponseRedirect('/')
 
 def factura(request):
+    cliente_id = request.session.get('cliente_id')
+    if not cliente_id:
+        return HttpResponseRedirect('/')
 
+    cliente = Cliente.objects.get(id=cliente_id)
     
+    # carrito_json = request.POST.get('carrito')
     
-    return render(request, 'factura.html', {})
+    ultima_compra = Compra.objects.filter(cliente=cliente).order_by('-fecha').first()
+    print(ultima_compra)
+
+    if not ultima_compra:
+        return render(request, 'factura.html', {'error': 'No se encontró ninguna compra.'})
+
+    detalles = Compra_Detalle.objects.filter(compra=ultima_compra)
+    print(detalles)
+    subtotal = sum(detalle.cantidad * detalle.precio_unitario for detalle in detalles)
+    iva = subtotal * Decimal('0.16')
+    total = subtotal + iva
+
+    return render(request, 'factura.html', {
+        'cliente': cliente,
+        'compra': ultima_compra,
+        'detalles': detalles,
+        'subtotal': subtotal,
+        'iva': iva,
+        'total': total,
+    })
 
 
 # DJANGO ORM (OBJECT - RELATIONAL - MAPPING)
