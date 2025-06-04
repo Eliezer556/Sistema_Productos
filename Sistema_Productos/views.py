@@ -55,10 +55,46 @@ def cerrar_sesion(request):
     return HttpResponseRedirect('/')
 
 def Charcuteria(request):
+    productos = Producto.objects.filter(categoria_id=1)
 
-    producto = Producto.objects.filter(categoria_id=1)
-    
-    return render(request, 'Charcuteria.html', { 'producto': producto })
+    productos_precio = []
+
+    for producto in productos:
+        precio_real = producto.precio * producto.contenido_neto
+        productos_precio.append({
+            'producto': producto,
+            'precio_real':precio_real
+        })
+
+    return render(request, 'harinas.html', {'productos_precio':productos_precio})
+
+def chucherias(request):
+    productos = Producto.objects.filter(categoria_id=4)
+
+    productos_precio = []
+
+    for producto in productos:
+        precio_real = producto.precio * producto.contenido_neto
+        productos_precio.append({
+            'producto': producto,
+            'precio_real':precio_real
+        })
+
+    return render(request, 'harinas.html', {'productos_precio':productos_precio})
+
+def Harinas(request):
+    productos = Producto.objects.filter(categoria_id=6)
+
+    productos_precio = []
+
+    for producto in productos:
+        precio_real = producto.precio * producto.contenido_neto
+        productos_precio.append({
+            'producto': producto,
+            'precio_real':precio_real
+        })
+
+    return render(request, 'harinas.html', {'productos_precio':productos_precio})
 
 def Pago_producto(request):
     cliente_id = request.session.get('cliente_id')
@@ -118,14 +154,35 @@ def finalizarPago(request):
             )
 
             if producto.materia_prima:
-                cantidad_consumida = producto.cantidad_por_unidad * producto_data['cantidad']
                 materia_prima = producto.materia_prima
+                cantidad_base = producto.contenido_neto * producto_data['cantidad']  # contenido_neto está en kg o unidades según el producto
+
+                # Conversión según la unidad de la materia prima
+                unidad_mp = materia_prima.unidad
+                if unidad_mp == 'kg':
+                    # contenido_neto ya está en kg si es por peso
+                    cantidad_consumida = cantidad_base
+                elif unidad_mp == 'g':
+                    # Si materia prima está en gramos, convierte kg a gramos
+                    cantidad_consumida = cantidad_base * Decimal('1000')
+                elif unidad_mp == 'l':
+                    # Si materia prima está en litros, asume contenido_neto está en litros
+                    cantidad_consumida = cantidad_base
+                elif unidad_mp == 'ml':
+                    # Si materia prima está en mililitros, convierte litros a mililitros
+                    cantidad_consumida = cantidad_base * Decimal('1000')
+                elif unidad_mp == 'unidad':
+                    # Si materia prima está en unidades, asume contenido_neto es unidades
+                    cantidad_consumida = cantidad_base
+                else:
+                    # Por defecto, no convierte
+                    cantidad_consumida = cantidad_base
+
                 if materia_prima.cantidad_disponible >= cantidad_consumida:
                     materia_prima.cantidad_disponible -= cantidad_consumida
                     materia_prima.save()
                 else:
-                    print(f"NO hay materia prima")
-
+                    print(f"NO hay materia prima suficiente para {producto.name}")
 
         print('FACTURA GENERADA')
         return HttpResponseRedirect('/factura')  

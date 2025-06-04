@@ -2,6 +2,13 @@
     background-color: blue;
     height: 100vh;
 } */
+.capitalize-first {
+    text-transform: lowercase;
+    display: inline-block;
+}
+.capitalize-first::first-letter {
+    text-transform: uppercase;
+}
 
 .custom-col {
     background-color: white;

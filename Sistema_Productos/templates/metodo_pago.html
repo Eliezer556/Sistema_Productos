@@ -28,9 +28,35 @@
                 <button type="submit" class="btn btn-primary bg-dark">procesar pago</button>
             </form>
         {% elif metodo == 'pago_movil' %}
-            <p>Pago movil</p>
+            <div class="d-flex justify-content-center align-items-center">
+                <span class="fs-2">Introduzca los datos de su pago movil</span>
+                <img src="{% static 'img/pagomovil.png' %}" class="w-25" alt="">
+            </div>
+
+            <form method="POST" class="d-flex flex-column justify-content-center align-items-center" action="{% url "finalizarPago" %}">
+                {% csrf_token %}
+                <div>
+                    <label for="">Cedula de indentidad</label>
+                    <input type="text" required>
+                </div>
+                <div>
+                    <label for="">Numero telefonico</label>
+                    <input type="text" required>
+                </div>
+                <select id="tipo-banco" name="tipo_banco" class="form-select w-25" required>
+                    <option value="" disabled selected>Seleccione el banco</option>
+                    <option value="banco-venezuela">Banco Venezuela</option>
+                    <option value="banco-banesco">Banesco</option>
+                    <option value="banco-BNC">BNC</option>
+                </select>
+                <input type="hidden" id="carrito" name="carrito">
+                <button type="submit" class="btn btn-primary bg-dark">procesar pago</button>
+            </form>
         {% elif metodo == 'efectivo' %}
-            <p>Efectivo</p>
+            <div class="d-flex justify-content-center align-items-center">
+                <span class="fs-2">Introduzca los datos de su pago movil</span>
+                <img src="{% static 'img/pagoefectivo.avif' %}" class="w-25" alt="">
+            </div>
         {% endif %}
     </div>
 

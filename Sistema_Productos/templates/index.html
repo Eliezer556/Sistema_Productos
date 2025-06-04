@@ -4,25 +4,25 @@
 {% block main %}
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar overflow-auto">
                 <div class="position-sticky">
                     <ul class="nav flex-column">
-                        <li class="nav-item">
+                        {% comment %} <li class="nav-item">
                             {% if cliente %}
                                 <span data-feather="sesion">Sesión de {{ cliente.name }} activa</span>
                                 <a class="nav-link active" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
                             {% endif %}                           
-                        </li>
+                        </li> {% endcomment %}
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'index' %}">
+                            <a class="nav-link" aria-current="page" href="{% url 'index' %}">
                                 <span data-feather="home"></span>
                                 Inicio
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{% url "harinas" %}">
                                 <span data-feather="file"></span>
-                                Harinas
+                                Harinas y granos
                             </a>
                         </li>
                         <li class="nav-item">
@@ -38,7 +38,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{% url "chucherias" %}">
                                 <span data-feather="bar-chart-2"></span>
                                 Chucherias
                             </a>
@@ -61,7 +61,8 @@
         </div>
     </div>
 
-    {% comment %} carrito de compra {% endcomment %}
+    <script src="{% static 'js/carrito.js' %}"></script>
+
 {% endblock  %}
 
     

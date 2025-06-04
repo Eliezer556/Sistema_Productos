@@ -2,126 +2,27 @@
 {% load static %}
 
 {% block content %}
-    {% if producto %}
+    {% if productos_precio %}
     <article class="container-producto">
-        <div class="row">
-            {% for p in producto %}
-                <div class="col-md-4 text-center mb-4 custom-col">
-                    <div class="nombre-producto">{{ p.name }}</div>
+        <div class="row justify-content-center">
+            {% for item in productos_precio %}
+                <div class="shadow w-25 h- p-3 m-1 bg-white rounded border col-md-4 text-center custom-col">
                     <div>
-                        <img src="{{ p.imagen.url }}" alt="" width="100px" height="100px">
+                        <img src="{{ item.producto.imagen.url }}" alt="" width="200px" height="200px">
                     </div>
-                    <div class="precio-producto">{{ p.precio }}$</div>
-                    <div>{{ p.status }}</div>   
-                    <button class="btn btn-primary select-button" data-id="{{ p.id }}" data-name="{{ p.name }}" data-price="{{ p.precio }}">Seleccionar</button>    
+                    <div class="precio-producto text-start fs-4 fw-bold text-secondary">{{ item.precio_real|floatformat:2 }}$</div>
+                    <div class="nombre-producto text-start fs-6 fw-bold text-secondary capitalize-first">{{ item.producto.name }}</div>
+                    <div class="descripcion-producto">{{item.producto.descripcion}}</div>
+                    <div>{{ item.producto.status }}</div>   
+                    <button class="btn btn-primary select-button" data-id="{{ item.producto.id }}" data-name="{{ item.producto.name }}" data-price="{{ item.precio_real }}">Agregar</button>    
+                    <button class="">SOY UN BOTON</button>
                 </div>
             {% endfor %}
         </div>
     </article>
     {% endif %}
 
-    <script>
-
-        function addProducto() {
-            const selectButtons = document.querySelectorAll('.select-button');
-            const cartItems = document.getElementById('cart-items');
-            const checkoutButton = document.getElementById('checkout');
-            const resetCarrito = document.getElementById('clear-car')
-    
-            const carrito = JSON.parse(localStorage.getItem('carrito')) || {};
-            
-
-            selectButtons.forEach(boton => {
-                boton.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-id');
-                    const productName = this.getAttribute('data-name');
-                    const productPrice = parseFloat(this.getAttribute('data-price'));
-
-                    if(carrito[productId]) {
-                       carrito[productId].cantidad += 1;
-                       carrito[productId].precioTotal += productPrice; 
-                    } else {
-                        carrito[productId] = {
-                            nombre : productName,
-                            precioUnitario : productPrice,
-                            precioTotal : productPrice,
-                            cantidad : 1,
-                        }
-                    }
-
-                    localStorage.setItem('carrito', JSON.stringify(carrito))
-                    renderCarrito()
-                    console.log('render carrito')
-                })
-            })
-
-            function renderCarrito() {
-                cartItems.innerHTML = '';
-
-                for(const id in carrito) {
-                    const producto = carrito[id]
-                    const listItem = document.createElement('li')
-                    listItem.classList.add('list-group-item')
-
-                    listItem.innerHTML = `
-                        <span>x${producto.cantidad} - ${producto.nombre} $${producto.precioTotal.toFixed(2)}</span>
-                        <button class="btn btn-danger btn-sm remove-from-cart" data-id="${id}">ELIMINAR</button>
-                    `;
-
-                    cartItems.appendChild(listItem)
-                }
-
-                const elimnarProducto = document.querySelectorAll('.remove-from-cart');
-                elimnarProducto.forEach(button => {
-                    button.addEventListener('click', function() {
-                        console.log('borrado')
-                        const id = this.getAttribute('data-id');
-                        delete carrito[id];
-                        localStorage.setItem('carrito', JSON.stringify(carrito));
-                        renderCarrito();
-                    });
-                });                
-            }
-            
-            resetCarrito.addEventListener('click', () => {
-                console.log('BORRADOS')
-                localStorage.removeItem('carrito');
-                for(const borrar in carrito) {
-                    delete carrito[borrar];
-                }
-                renderCarrito();
-            });   
-            
-            checkoutButton.addEventListener('click', (event) => {
-                if (Object.keys(carrito).length === 0 ) {
-                    event.preventDefault()
-
-                    if(!document.querySelector('.alert')) {
-                        const alerts = document.createElement('div')
-                        alerts.classList.add('alert', 'alert-success')
-                        alerts.innerHTML = `
-                            Carrito vacio por favor, seleccione algun producto.
-                        `
-                        cartItems.appendChild(alerts);    
-                        
-                        //Elimnar alerta
-                        setTimeout(() => {
-                            cartItems.removeChild(alerts);
-                        }, 3000)
-                    }
-
-                } else {
-                    window.location.href = '{% url "Pago_producto" %}';   
-                }
-            })
-
-            renderCarrito();
-        }
-        
-    
-        document.addEventListener('DOMContentLoaded', addProducto);
-    </script>
+    <script src="{% static 'js/carrito.js' %}"></script>
     
 {% endblock %}
-
 
