@@ -66,7 +66,7 @@ def Charcuteria(request):
             'precio_real':precio_real
         })
 
-    return render(request, 'harinas.html', {'productos_precio':productos_precio})
+    return render(request, 'charcuteria.html', {'productos_precio':productos_precio})
 
 def chucherias(request):
     productos = Producto.objects.filter(categoria_id=4)
@@ -80,7 +80,7 @@ def chucherias(request):
             'precio_real':precio_real
         })
 
-    return render(request, 'harinas.html', {'productos_precio':productos_precio})
+    return render(request, 'chucherias.html', {'productos_precio':productos_precio})
 
 def Harinas(request):
     productos = Producto.objects.filter(categoria_id=6)
