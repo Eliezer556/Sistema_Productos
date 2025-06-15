@@ -1,0 +1,22 @@
+.nav-link {
+    border-radius: 10px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    border-radius: 10px;
+    background-color: rgb(0, 98, 255);
+    color: white !important;
+}
+
+.nav-link:hover [data-lucide],
+.nav-link.active [data-lucide],
+.nav-link:hover .span-link,
+.nav-link.active .span-link {
+    transition: color 0.2s, stroke 0.2s, fill 0.2s;
+    color: white !important;
+    stroke: white !important; /* Para íconos SVG de lucide */
+    /* fill: white !important; */
+}
+

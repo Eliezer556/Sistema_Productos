@@ -1,0 +1,44 @@
+/* .container {
+    background-color: blue;
+    height: 100vh;
+} */
+.diagonal-label {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .unavailable-label {
+            background-color: #dc3545; /* Rojo Bootstrap */
+        }
+        .available-label {
+            background-color: #28a745; /* Verde Bootstrap */
+        }
+        .position-relative {
+            position: relative;
+        }
+        .overflow-hidden {
+            overflow: hidden;
+        }    
+
+.capitalize-first {
+    text-transform: lowercase;
+    display: inline-block;
+}
+.capitalize-first::first-letter {
+    text-transform: uppercase;
+}
+
+.custom-col {
+    background-color: white;
+    border-radius: 20px;
+}
+
+.descripcion_producto {
+    color: #afafaf;
+}

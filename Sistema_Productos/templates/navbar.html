@@ -1,0 +1,70 @@
+        
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar overflow-auto">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item session-info">
+                        {% if cliente %}
+                        <span class="nav-link">
+                            <span data-lucide="user-check"></span>
+                            Sesión de {{ cliente.name }} activa
+                        </span>
+                        <a class="nav-link active" href="{% url 'cerrar_sesion' %}">
+                            <span data-lucide="log-out"></span>
+                            Cerrar sesión
+                        </a>
+                        {% else %}
+                        <span class="nav-link inactive-session">
+                            <span data-lucide="user-x"></span>
+                            No hay sesión activa
+                        </span>
+                        {% endif %}
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{% url 'index' %}">
+                            <span data-lucide="home"></span>
+                            Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "harinas" %}">
+                            <span data-lucide="wheat"></span>
+                            Harinas y granos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "Charcuteria" %}">
+                            <span data-lucide="beef"></span>
+                            Charcuteria
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-lucide="carrot"></span>
+                            Verduras
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "chucherias" %}">
+                            <span data-lucide="lollipop"></span>
+                            Chucherias
+                        </a>
+                    </li>
+                </ul>
+                <div id="cart" class="cart">
+                    <div class='d-flex align-items-center'>
+                        <h3 class="text-center">carrito de compras</h3>
+                        <span data-lucide="shopping-cart" class='w-50 uppercase'></span>
+                    </div>
+                    <ul id="cart-items" class="list-group">
+                        <!-- JS dynamic content -->
+                    </ul>
+                    <a href="{% url 'Pago_producto' %}" id="checkout" class="btn btn-success w-100 mt-2">
+                        <span data-lucide="wallet"></span> Pagar producto
+                    </a>
+                    <button id="clear-car" class="btn btn-danger pt-2 w-100 mt-2">
+                        <span data-lucide="trash-2"></span> Vaciar carrito
+                    </button>
+                </div>
+            </div>
+        </nav>

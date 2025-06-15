@@ -1,28 +1,46 @@
 {% extends "index.html"%}
 {% load static %}
 
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'producto.css' %}">
+{% endblock %}
+
 {% block content %}
     {% if productos_precio %}
     <article class="container-producto">
         <div class="row justify-content-center">
+            <div class="p-2 d-flex alig-items-center justify-content-center" >
+                <span class="h-100" data-lucide="search"></span>
+                <input id="busqueda-producto" class="form-control w-25" type="text">
+            </div>
             {% for item in productos_precio %}
-                <div class="shadow w-25 h- p-3 m-1 bg-white rounded border col-md-4 text-center custom-col">
+                <div class="shadow  w-25 h- p-3 m-1 bg-white rounded border col-md-4 text-center custom-col position-relative overflow-hidden producto-tarjeta">
+                    <!-- Etiqueta diagonal (condicional) -->
+                    {% if item.producto.status == 'agotado' %}
+                        <div class="unavailable-label diagonal-label bg-danger text-white">AGOTADO</div>
+                    {% else %}
+                        <div class="available-label diagonal-label bg-success text-white">DISPONIBLE</div>
+                    {% endif %}
+                    
                     <div>
                         <img src="{{ item.producto.imagen.url }}" alt="" width="200px" height="200px">
                     </div>
                     <div class="precio-producto text-start fs-4 fw-bold text-secondary">{{ item.precio_real|floatformat:2 }}$</div>
-                    <div class="nombre-producto text-start fs-6 fw-bold text-secondary capitalize-first">{{ item.producto.name }}</div>
+                    <div class="nombre-producto fs-6 fw-bold text-secondary capitalize-first">{{ item.producto.name }}</div>
                     <div class="descripcion-producto">{{item.producto.descripcion}}</div>
-                    <div>{{ item.producto.status }}</div>   
-                    <button class="btn btn-primary select-button" data-id="{{ item.producto.id }}" data-name="{{ item.producto.name }}" data-price="{{ item.precio_real }}">Agregar</button>    
+                    {% if  item.producto.status == 'disponible' %}
+                        <button class="btn btn-primary select-button" data-id="{{ item.producto.id }}" data-name="{{ item.producto.name }}" data-price="{{ item.precio_real }}">Agregar</button>    
+                    {% elif item.producto.status == 'agotado' %}
+                        <button class="btn btn-primary select-button disabled" display="none" data-id="{{ item.producto.id }}" data-name="{{ item.producto.name }}" data-price="{{ item.precio_real }}">Agregar</button>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     </article>
     {% endif %}
 
-    <script src="{% static 'js/carrito.js' %}"></script>
     
+    <script src="{% static 'js/carrito.js' %}"></script>
+    <script src="{% static 'js/filtrado_producto.js' %}"></script>
 {% endblock %}
-
 

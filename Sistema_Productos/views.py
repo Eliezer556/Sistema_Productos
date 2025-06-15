@@ -55,6 +55,11 @@ def cerrar_sesion(request):
     return HttpResponseRedirect('/')
 
 def Charcuteria(request):
+    cliente_id = request.session.get('cliente_id')
+    cliente = None
+    if cliente_id:
+        cliente = Cliente.objects.get(id=cliente_id)
+
     productos = Producto.objects.filter(categoria_id=1)
 
     productos_precio = []
@@ -63,12 +68,17 @@ def Charcuteria(request):
         precio_real = producto.precio * producto.contenido_neto
         productos_precio.append({
             'producto': producto,
-            'precio_real':precio_real
+            'precio_real':precio_real,
         })
 
-    return render(request, 'charcuteria.html', {'productos_precio':productos_precio})
+    return render(request, 'charcuteria.html', {'productos_precio':productos_precio, 'cliente':cliente})
 
 def chucherias(request):
+    cliente_id = request.session.get('cliente_id')
+    cliente = None
+    if cliente_id:
+        cliente = Cliente.objects.get(id=cliente_id)
+        
     productos = Producto.objects.filter(categoria_id=4)
 
     productos_precio = []
@@ -80,9 +90,13 @@ def chucherias(request):
             'precio_real':precio_real
         })
 
-    return render(request, 'chucherias.html', {'productos_precio':productos_precio})
+    return render(request, 'chucherias.html', {'productos_precio':productos_precio, 'cliente':cliente})
 
 def Harinas(request):
+    cliente_id = request.session.get('cliente_id')
+    cliente = None
+    if cliente_id:
+        cliente = Cliente.objects.get(id=cliente_id)
     productos = Producto.objects.filter(categoria_id=6)
 
     productos_precio = []
@@ -94,7 +108,7 @@ def Harinas(request):
             'precio_real':precio_real
         })
 
-    return render(request, 'harinas.html', {'productos_precio':productos_precio})
+    return render(request, 'harinas.html', {'productos_precio':productos_precio, 'cliente':cliente})
 
 def Pago_producto(request):
     cliente_id = request.session.get('cliente_id')
