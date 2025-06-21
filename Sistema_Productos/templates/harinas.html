@@ -8,39 +8,68 @@
 {% block content %}
     {% if productos_precio %}
     <article class="container-producto">
-        <div class="row justify-content-center">
-            <div class="p-2 d-flex alig-items-center justify-content-center" >
-                <span class="h-100" data-lucide="search"></span>
-                <input id="busqueda-producto" class="form-control w-25" type="text">
-            </div>
+        <!-- Barra de búsqueda mejorada -->
+        <div class="search-container p-3 position-relative">
+            <span data-lucide="search" class="position-absolute search-icon"></span>
+            <input id="busqueda-producto" class="form-control" type="text" placeholder="Buscar productos...">
+        </div>
+        
+        <!-- Contenedor de productos con filtrado -->
+        <div class="product-grid" id="product-grid">
             {% for item in productos_precio %}
-                <div class="shadow  w-25 h- p-3 m-1 bg-white rounded border col-md-4 text-center custom-col position-relative overflow-hidden producto-tarjeta">
-                    <!-- Etiqueta diagonal (condicional) -->
+                <div class="producto-tarjeta" data-name="{{ item.producto.name|lower }}" data-category="{{ item.producto.categoria|lower }}">
+                    <!-- Etiqueta de estado integrada -->
                     {% if item.producto.status == 'agotado' %}
-                        <div class="unavailable-label diagonal-label bg-danger text-white">AGOTADO</div>
+                        <div class="status-badge status-unavailable">
+                            <span data-lucide="x-circle" class="status-icon"></span>
+                            AGOTADO
+                        </div>
                     {% else %}
-                        <div class="available-label diagonal-label bg-success text-white">DISPONIBLE</div>
+                        <div class="status-badge status-available">
+                            <span data-lucide="check-circle" class="status-icon"></span>
+                            DISPONIBLE
+                        </div>
                     {% endif %}
                     
-                    <div>
-                        <img src="{{ item.producto.imagen.url }}" alt="" width="200px" height="200px">
+                    <!-- Imagen del producto -->
+                    <div class="product-img-container">
+                        <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.name }}">
                     </div>
-                    <div class="precio-producto text-start fs-4 fw-bold text-secondary">{{ item.precio_real|floatformat:2 }}$</div>
-                    <div class="nombre-producto fs-6 fw-bold text-secondary capitalize-first">{{ item.producto.name }}</div>
-                    <div class="descripcion-producto">{{item.producto.descripcion}}</div>
-                    {% if  item.producto.status == 'disponible' %}
-                        <button class="btn btn-primary select-button" data-id="{{ item.producto.id }}" data-name="{{ item.producto.name }}" data-price="{{ item.precio_real }}">Agregar</button>    
-                    {% elif item.producto.status == 'agotado' %}
-                        <button class="btn btn-primary select-button disabled" display="none" data-id="{{ item.producto.id }}" data-name="{{ item.producto.name }}" data-price="{{ item.precio_real }}">Agregar</button>
+                    
+                    <!-- Información del producto -->
+                    <div class="product-info">
+                        <div class="precio-producto">${{ item.precio_real|floatformat:2 }}</div>
+                        <h3 class="nombre-producto">{{ item.producto.name|title }}</h3>
+                        <p class="descripcion-producto">{{ item.producto.descripcion|truncatechars:100 }}</p>
+                    </div>
+                    
+                    <!-- Botón de acción -->
+                    {% if item.producto.status == 'disponible' %}
+                        <button class="select-button" 
+                                data-id="{{ item.producto.id }}" 
+                                data-name="{{ item.producto.name }}" 
+                                data-price="{{ item.precio_real }}">
+                            <span data-lucide="shopping-cart" class="button-icon"></span>
+                            Añadir al carrito
+                        </button>
+                    {% else %}
+                        <button class="select-button" disabled>
+                            <span data-lucide="clock" class="button-icon"></span>
+                            No disponible
+                        </button>
                     {% endif %}
                 </div>
             {% endfor %}
         </div>
     </article>
+    {% else %}
+        <div class="text-center py-5 empty-state">
+            <span data-lucide="frown" width="48" height="48" class="text-muted mb-3"></span>
+            <h4 class="text-muted">No hay productos disponibles</h4>
+            <p class="text-muted">Pronto tendremos nuevos productos para ti</p>
+        </div>
     {% endif %}
 
-    
     <script src="{% static 'js/carrito.js' %}"></script>
     <script src="{% static 'js/filtrado_producto.js' %}"></script>
 {% endblock %}
-

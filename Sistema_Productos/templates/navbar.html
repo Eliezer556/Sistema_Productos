@@ -1,70 +1,99 @@
         
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar overflow-auto">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item session-info">
-                        {% if cliente %}
-                        <span class="nav-link">
-                            <span data-lucide="user-check"></span>
-                            Sesión de {{ cliente.name }} activa
-                        </span>
-                        <a class="nav-link active" href="{% url 'cerrar_sesion' %}">
-                            <span data-lucide="log-out"></span>
-                            Cerrar sesión
-                        </a>
-                        {% else %}
-                        <span class="nav-link inactive-session">
-                            <span data-lucide="user-x"></span>
-                            No hay sesión activa
-                        </span>
-                        {% endif %}
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url 'index' %}">
-                            <span data-lucide="home"></span>
-                            Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url "harinas" %}">
-                            <span data-lucide="wheat"></span>
-                            Harinas y granos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url "Charcuteria" %}">
-                            <span data-lucide="beef"></span>
-                            Charcuteria
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-lucide="carrot"></span>
-                            Verduras
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url "chucherias" %}">
-                            <span data-lucide="lollipop"></span>
-                            Chucherias
-                        </a>
-                    </li>
-                </ul>
-                <div id="cart" class="cart">
-                    <div class='d-flex align-items-center'>
-                        <h3 class="text-center">carrito de compras</h3>
-                        <span data-lucide="shopping-cart" class='w-50 uppercase'></span>
-                    </div>
-                    <ul id="cart-items" class="list-group">
-                        <!-- JS dynamic content -->
-                    </ul>
-                    <a href="{% url 'Pago_producto' %}" id="checkout" class="btn btn-success w-100 mt-2">
-                        <span data-lucide="wallet"></span> Pagar producto
-                    </a>
-                    <button id="clear-car" class="btn btn-danger pt-2 w-100 mt-2">
-                        <span data-lucide="trash-2"></span> Vaciar carrito
-                    </button>
-                </div>
+<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar overflow-auto">
+    <div class="position-sticky">
+        <!-- Sección de información de sesión -->
+        <div class="session-info p-3 mb-4 rounded-3 mt-3" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+            {% if cliente %}
+            <div class="d-flex align-items-center mb-2">
+                <span data-lucide="user-check" class="text-primary me-2"></span>
+                <span class="fw-medium">Bienvenido, {{ cliente.name }}</span>
             </div>
-        </nav>
+            <a class="btn btn-outline-danger btn-sm w-100" href="{% url 'cerrar_sesion' %}">
+                <span data-lucide="log-out" class="me-1"></span>
+                Cerrar sesión
+            </a>
+            {% else %}
+            <div class="d-flex align-items-center">
+                <span data-lucide="user-x" class="text-secondary me-2"></span>
+                <span class="text-muted">Sesión no iniciada</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Menú de categorías -->
+        <ul class="nav flex-column mb-4">
+            <li class="nav-item mb-2">
+                <a class="nav-link menu-item" aria-current="page" href="{% url 'index' %}">
+                    <span class="menu-icon" data-lucide="home"></span>
+                    <span class="menu-text">Inicio</span>
+                    <span class="menu-arrow" data-lucide="chevron-right"></span>
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link menu-item" href="{% url 'harinas' %}">
+                    <span class="menu-icon" data-lucide="wheat" style="color: #d4a762;"></span>
+                    <span class="menu-text">Harinas y granos</span>
+                    <span class="menu-arrow" data-lucide="chevron-right"></span>
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link menu-item" href="{% url 'Charcuteria' %}">
+                    <span class="menu-icon" data-lucide="beef" style="color: #e63946;"></span>
+                    <span class="menu-text">Charcutería</span>
+                    <span class="menu-arrow" data-lucide="chevron-right"></span>
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link menu-item" href="#">
+                    <span class="menu-icon" data-lucide="carrot" style="color: #2a9d8f;"></span>
+                    <span class="menu-text">Verduras</span>
+                    <span class="menu-arrow" data-lucide="chevron-right"></span>
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link menu-item" href="{% url 'chucherias' %}">
+                    <span class="menu-icon" data-lucide="lollipop" style="color: #ff70a6;"></span>
+                    <span class="menu-text">Chucherías</span>
+                    <span class="menu-arrow" data-lucide="chevron-right"></span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Carrito de compras -->
+        <div id="cart" class="cart-items p-3 rounded-3">
+            <div class='d-flex align-items-center justify-content-between mb-3'>
+                <h4 class="m-0 fw-bold text-uppercase" style="color: #2b2d42;">
+                    <span data-lucide="shopping-cart" class="me-2" style="color: #4361ee;"></span>
+                    Tu Carrito
+                </h4>
+                <span class="badge bg-primary rounded-pill" id="cart-count">1</span>
+            </div>
+            
+            <ul id="cart-items" class="list-group mb-3" style="max-height: 300px; overflow-y: auto;">
+                <!-- Item del carrito -->
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold me-2">x1</span>
+                        <span class="me-2">cheesecake</span>
+                        <span class="text-success fw-bold">$1.50</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger remove-from-cart">
+                        <span data-lucide="trash-2" class="me-1"></span>
+                        Eliminar
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="d-grid gap-2">
+                <a href="{% url 'Pago_producto' %}" id="checkout" class="btn btn-primary d-flex align-items-center justify-content-center">
+                    <span data-lucide="wallet" class="me-2"></span> 
+                    Proceder al pago
+                </a>
+                <button id="clear-car" class="btn btn-outline-danger d-flex align-items-center justify-content-center">
+                    <span data-lucide="trash-2" class="me-2"></span> 
+                    Vaciar carrito
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>

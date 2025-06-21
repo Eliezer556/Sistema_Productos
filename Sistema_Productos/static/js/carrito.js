@@ -37,29 +37,42 @@ function addProducto() {
         cartItems.innerHTML = '';
 
         for(const id in carrito) {
-            const producto = carrito[id]
-            const listItem = document.createElement('li')
-            listItem.classList.add('list-group-item')
-
+            const producto = carrito[id];
+            const listItem = document.createElement('li');
+            
+            // Mantener todas las clases originales
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center py-3';
+            
             listItem.innerHTML = `
-                <span>x${producto.cantidad} - ${producto.nombre} $${producto.precioTotal.toFixed(2)}</span>
-                <button class="btn btn-danger btn-sm remove-from-cart" data-id="${id}">ELIMINAR</button>
+                <div class="d-flex align-items-center">
+                    <span class="fw-bold me-2">x${producto.cantidad}</span>
+                    <span class="me-2">${producto.nombre}</span>
+                    <span class="text-success fw-bold">$${producto.precioTotal.toFixed(2)}</span>
+                </div>
+                <button class="btn btn-sm btn-outline-danger remove-from-cart" data-id="${id}">
+                    <span data-lucide="trash-2" class="me-1"></span>
+                    Eliminar
+                </button>
             `;
 
-            cartItems.appendChild(listItem)
+            cartItems.appendChild(listItem);
+            
+            // Reactivar los iconos de Lucide para el nuevo elemento
+            if(window.lucide) {
+                lucide.createIcons();
+            }
         }
-
-        const elimnarProducto = document.querySelectorAll('.remove-from-cart');
-        elimnarProducto.forEach(button => {
-            button.addEventListener('click', function() {
-                console.log('borrado')
-                const id = this.getAttribute('data-id');
-                delete carrito[id];
-                localStorage.setItem('carrito', JSON.stringify(carrito));
-                renderCarrito();
-            });
-        });                
     }
+
+    cartItems.addEventListener('click', function(e) {
+        if(e.target.closest('.remove-from-cart')) {
+            const button = e.target.closest('.remove-from-cart');
+            const productId = button.getAttribute('data-id');
+            delete carrito[productId];
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            renderCarrito();
+        }
+    });
     
     resetCarrito.addEventListener('click', () => {
         console.log('BORRADOS')

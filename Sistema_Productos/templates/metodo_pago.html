@@ -1,76 +1,276 @@
 {% extends "index.html" %}
 {% load static %}
 
-{% block content%}
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'metodo_pago.css' %}">
+    <style>
+        /* Estilos para mensajes de error - no modifican tus clases existentes */
+        .mensaje-error {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .campo-invalido {
+            border-color: #dc3545 !important;
+        }
+    </style>
+{% endblock %}
 
+{% block content %}
     <div class="content">
-        <h1 class="display-2 text-center fw-normal text-uppercase fs-1">metodo de pago</h1>
+        <h1 class="display-2 text-center fw-normal text-uppercase fs-1">Método de pago</h1>
+
         {% if metodo == 'tarjeta' %}
             <div class="d-flex justify-content-center align-items-center">
                 <span class="fs-2">Por favor ingrese su tarjeta</span>
                 <img src="{% static 'img/tarjetaPago.jpg' %}" alt="" class="w-25">
             </div>
 
-            <form method="POST" class="d-flex flex-column justify-content-center align-items-center" action="{% url "finalizarPago" %}">
+            <form method="POST" class="d-flex flex-column justify-content-center align-items-center" action="{% url "finalizarPago" %}" id="formPago">
                 {% csrf_token %}
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                    <label class="d-block fs-4">Ingresar cedula</label>
-                    <input class="input-cedula d-block mb-3" type="text" required>
+                <div class="w-100 mb-3">
+                    <label>Cédula</label>
+                    <input class="input-cedula form-control" type="text" name="cedula" required>
+                    <div class="mensaje-error" id="error-cedula">La cédula debe tener entre 7 y 9 dígitos</div>
                 </div>
-                <select id="tipo-cuenta" name="tipo_cuenta" class="form-select w-25" required>
-                    <option value="" disabled selected>Seleccione un tipo de cuenta</option>
-                    <option value="ahorro">Ahorro</option>
-                    <option value="corriente">Corriente</option>
-                </select>
-                <label for="">clave de la cuenta</label>
-                <input type="password" required>
+
+                <div class="w-100 mb-3">
+                    <label>Tipo de cuenta</label>
+                    <select id="tipo-cuenta" name="tipo_cuenta" class="form-select" required>
+                        <option value="" disabled selected>Seleccione un tipo de cuenta</option>
+                        <option value="ahorro">Ahorro</option>
+                        <option value="corriente">Corriente</option>
+                    </select>
+                    <div class="mensaje-error" id="error-cuenta">Seleccione un tipo de cuenta</div>
+                </div>
+
+                <div class="w-100 mb-3">
+                    <label>Clave de la cuenta</label>
+                    <input type="password" name="clave" class="form-control" required>
+                    <div class="mensaje-error" id="error-clave">La clave debe tener entre 4 y 6 dígitos</div>
+                </div>
+
                 <input type="hidden" id="carrito" name="carrito">
-                <button type="submit" class="btn btn-primary bg-dark">procesar pago</button>
+                <button type="submit" class="btn btn-primary mt-3">Procesar pago</button>
             </form>
+
         {% elif metodo == 'pago_movil' %}
             <div class="d-flex justify-content-center align-items-center">
-                <span class="fs-2">Introduzca los datos de su pago movil</span>
+                <span class="fs-2">Introduzca los datos de su pago móvil</span>
                 <img src="{% static 'img/pagomovil.png' %}" class="w-25" alt="">
             </div>
 
-            <form method="POST" class="d-flex flex-column justify-content-center align-items-center" action="{% url "finalizarPago" %}">
+            <form method="POST" class="d-flex flex-column justify-content-center align-items-center" action="{% url "finalizarPago" %}" id="formPago">
                 {% csrf_token %}
-                <div>
-                    <label for="">Cedula de indentidad</label>
-                    <input type="text" required>
+                <div class="w-100 mb-3">
+                    <label>Cédula de identidad</label>
+                    <input type="text" name="cedula" class="form-control" required>
+                    <div class="mensaje-error" id="error-cedula">La cédula debe tener entre 7 y 9 dígitos</div>
                 </div>
-                <div>
-                    <label for="">Numero telefonico</label>
-                    <input type="text" required>
+
+                <div class="w-100 mb-3">
+                    <label>Número telefónico</label>
+                    <input type="text" name="telefono" class="form-control" required>
+                    <div class="mensaje-error" id="error-telefono">Ingrese un número válido (ej: 04121234567)</div>
                 </div>
-                <select id="tipo-banco" name="tipo_banco" class="form-select w-25" required>
-                    <option value="" disabled selected>Seleccione el banco</option>
-                    <option value="banco-venezuela">Banco Venezuela</option>
-                    <option value="banco-banesco">Banesco</option>
-                    <option value="banco-BNC">BNC</option>
-                </select>
+
+                <div class="w-100 mb-3">
+                    <label>Banco</label>
+                    <select id="tipo-banco" name="tipo_banco" class="form-select" required>
+                        <option value="" disabled selected>Seleccione el banco</option>
+                        <option value="banco-venezuela">Banco Venezuela</option>
+                        <option value="banco-banesco">Banesco</option>
+                        <option value="banco-BNC">BNC</option>
+                    </select>
+                    <div class="mensaje-error" id="error-banco">Seleccione un banco</div>
+                </div>
+
                 <input type="hidden" id="carrito" name="carrito">
-                <button type="submit" class="btn btn-primary bg-dark">procesar pago</button>
+                <button type="submit" class="btn btn-primary mt-3">Procesar pago</button>
             </form>
+
         {% elif metodo == 'efectivo' %}
             <div class="d-flex justify-content-center align-items-center">
-                <span class="fs-2">Introduzca los datos de su pago movil</span>
+                <span class="fs-2">Dirígete a caja para completar tu pago en efectivo</span>
                 <img src="{% static 'img/pagoefectivo.avif' %}" class="w-25" alt="">
             </div>
         {% endif %}
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const carrito = JSON.parse(localStorage.getItem('carrito')) || {};
-            console.log('Carrito cargado desde localStorage:', carrito);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Script de validación cargado'); // Para verificar que el script se carga
             
+            // 1. Cargar el carrito desde localStorage
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || {};
             const carritoInput = document.getElementById('carrito');
-            carritoInput.value = JSON.stringify(carrito); // Convierte el carrito a JSON y lo asigna al campo oculto
+            if (carritoInput) {
+                carritoInput.value = JSON.stringify(carrito);
+            }
+
+            // 2. Configurar validación del formulario
+            const form = document.getElementById('formPago');
+            if (form) {
+                console.log('Formulario encontrado'); // Verificación
+                
+                // 3. Manejar el envío del formulario
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Formulario enviado'); // Verificación
+                    
+                    let isValid = true;
+                    window.scrolledToFirstError = false;
+
+                    // Limpiar errores previos
+                    document.querySelectorAll('.mensaje-error').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    document.querySelectorAll('.campo-invalido').forEach(el => {
+                        el.classList.remove('campo-invalido');
+                    });
+
+                    // Validación según método de pago
+                    if ('{{ metodo }}' === 'tarjeta') {
+                        console.log('Validando método tarjeta');
+                        
+                        // Validar cédula (7-9 dígitos)
+                        const cedula = form.querySelector('[name="cedula"]');
+                        if (cedula && !/^\d{7,9}$/.test(cedula.value)) {
+                            console.log('Error en cédula');
+                            mostrarError(cedula, 'error-cedula');
+                            isValid = false;
+                        }
+
+                        // Validar tipo de cuenta (seleccionado)
+                        const tipoCuenta = form.querySelector('[name="tipo_cuenta"]');
+                        if (tipoCuenta && !tipoCuenta.value) {
+                            console.log('Error en tipo de cuenta');
+                            mostrarError(tipoCuenta, 'error-cuenta');
+                            isValid = false;
+                        }
+
+                        // Validar clave (4-6 dígitos)
+                        const clave = form.querySelector('[name="clave"]');
+                        if (clave && !/^\d{4,6}$/.test(clave.value)) {
+                            console.log('Error en clave');
+                            mostrarError(clave, 'error-clave');
+                            isValid = false;
+                        }
+
+                    } else if ('{{ metodo }}' === 'pago_movil') {
+                        console.log('Validando método pago móvil');
+                        
+                        // Validar cédula (7-9 dígitos)
+                        const cedula = form.querySelector('[name="cedula"]');
+                        if (cedula && !/^\d{7,9}$/.test(cedula.value)) {
+                            console.log('Error en cédula');
+                            mostrarError(cedula, 'error-cedula');
+                            isValid = false;
+                        }
+
+                        // Validar teléfono (formato venezolano)
+                        const telefono = form.querySelector('[name="telefono"]');
+                        if (telefono && !/^04(12|14|16|24|26)\d{7}$/.test(telefono.value)) {
+                            console.log('Error en teléfono');
+                            mostrarError(telefono, 'error-telefono');
+                            isValid = false;
+                        }
+
+                        // Validar banco (seleccionado)
+                        const banco = form.querySelector('[name="tipo_banco"]');
+                        if (banco && !banco.value) {
+                            console.log('Error en banco');
+                            mostrarError(banco, 'error-banco');
+                            isValid = false;
+                        }
+                    }
+
+                    // 4. Enviar formulario si es válido
+                    if (isValid) {
+                        console.log('Formulario válido, enviando...');
+                        form.submit();
+                    } else {
+                        console.log('Formulario inválido');
+                    }
+                });
+
+                // 5. Configurar validación en tiempo real mejorada
+                const configurarValidacionInput = (input, regex) => {
+                    if (!input) {
+                        console.log('Input no encontrado');
+                        return;
+                    }
+
+                    console.log('Configurando validación para:', input.name);
+                    
+                    // Validar al perder el foco
+                    input.addEventListener('blur', function() {
+                        if (this.value && !regex.test(this.value)) {
+                            console.log('Validación fallida en blur:', this.name);
+                            this.classList.add('campo-invalido');
+                            const errorId = 'error-' + this.name;
+                            const errorElement = document.getElementById(errorId);
+                            if (errorElement) {
+                                errorElement.style.display = 'block';
+                            }
+                        }
+                    });
+
+                    // Limpiar error al empezar a editar
+                    input.addEventListener('focus', function() {
+                        this.classList.remove('campo-invalido');
+                        const errorId = 'error-' + this.name;
+                        const errorElement = document.getElementById(errorId);
+                        if (errorElement) {
+                            errorElement.style.display = 'none';
+                        }
+                    });
+
+                    // Solo números para campos numéricos
+                    if (regex.toString().includes('\\d')) {
+                        input.addEventListener('input', function() {
+                            this.value = this.value.replace(/[^0-9]/g, '');
+                        });
+                    }
+                };
+
+                // 6. Aplicar a los campos según el método de pago
+                if ('{{ metodo }}' === 'tarjeta') {
+                    configurarValidacionInput(form.querySelector('[name="cedula"]'), /^\d{7,9}$/);
+                    configurarValidacionInput(form.querySelector('[name="clave"]'), /^\d{4,6}$/);
+                } else if ('{{ metodo }}' === 'pago_movil') {
+                    configurarValidacionInput(form.querySelector('[name="cedula"]'), /^\d{7,9}$/);
+                    configurarValidacionInput(form.querySelector('[name="telefono"]'), /^04(12|14|16|24|26)\d{7}$/);
+                }
+            } else {
+                console.log('Formulario no encontrado');
+            }
+
+            // 7. Función para mostrar errores
+            function mostrarError(campo, idError) {
+                if (!campo || !idError) {
+                    console.log('Error al mostrar error: campo o idError no definido');
+                    return;
+                }
+                
+                console.log('Mostrando error para:', idError);
+                campo.classList.add('campo-invalido');
+                const errorElement = document.getElementById(idError);
+                if (errorElement) {
+                    errorElement.style.display = 'block';
+                    // Scroll al primer error
+                    if (!window.scrolledToFirstError) {
+                        errorElement.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                        window.scrolledToFirstError = true;
+                    }
+                } else {
+                    console.log('Elemento de error no encontrado:', idError);
+                }
+            }
         });
     </script>
-
-{% endblock  %}
-
-
-
+{% endblock %}

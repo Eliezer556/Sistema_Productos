@@ -4,47 +4,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'charcuteria.css' %}">
-    <link rel="stylesheet" href="{% static 'Cliente_Sesion.css' %}">
     <link rel="stylesheet" href="{% static 'index.css' %}">
-    <link rel="stylesheet" href="{% static 'pago_producto.css' %}">
     <link rel="stylesheet" href="{% static "navbar.css" %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% block extra_styles %}
-
-    {% endblock  %}
+    <link rel="stylesheet" href="{% static 'cliente_sesion.css' %}">
+    {% endblock %}
     
     <title>FastSHOP</title>
 </head>
 
 <body>
     {% block main %}
-    <h1>TIENDA DE PRODUCTOS</h1>
-    <main class="container-index">
-
-        <h2>Ingreso del cliente</h2>
-        <div class="container-cliente-ingreso">
-            <form action="{% url 'Ingreso_Cliente' %}" method="POST">
-                {% csrf_token %}
-                <input class="form-control" type="text" name="cedula" placeholder="Cédula cliente" required>
-                <button type="submit" class="btn btn-primary">Ingresar</button>
-            </form>
+    <main class="flex-grow flex items-center justify-center overflow-hidden">
+        <div class='app-container'>
+            <div class="panel-left" id="panelLeft">
+                <h2 id="panelText">¿No tienes cuenta?</h2>
+                <p id="panelSubtext">Presiona para registrarte</p>
+                <button id="togglePanel" class="panel-toggle-btn">
+                    <span id="toggleText">Registrarse</span>
+                </button>
+            </div>
+            <div class="form-container">
+                <div class="form-section login-section active" id="loginSection">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Ingreso del cliente</h2>
+                    <form action="{% url 'Ingreso_Cliente' %}" method="POST" class="form-wrapper">
+                        {% csrf_token %}
+                        <div class="position-relative mb-4">
+                            <i data-lucide="scan-face" class="form-control-icon"></i>
+                            <input type="text" name="cedula" placeholder="Cédula cliente" required class="form-control">
+                        </div>
+                        <button type="submit" id="btnLogin" class="btn-primary">Ingresar</button>
+                    </form>
+                </div>
+                <div class="form-section register-section" id="registerSection">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Registro del cliente</h2>
+                    <form method="POST" class="form-wrapper">
+                        {% csrf_token %}
+                        <div class="position-relative mb-3">
+                            <i data-lucide="user" class="form-control-icon"></i>
+                            <input type="text" name="nombre" placeholder="Nombre cliente" required class="form-control">
+                        </div>
+                        <div class="position-relative mb-3">
+                            <i data-lucide="user-check" class="form-control-icon"></i>
+                            <input type="text" name="apellido" placeholder="Apellido cliente" required class="form-control">
+                        </div>
+                        <div class="position-relative mb-4">
+                            <i data-lucide="scan-face" class="form-control-icon"></i>
+                            <input type="text" name="cedula" placeholder="Cédula cliente" required class="form-control">
+                        </div>
+                        <button type="submit" id="btnRegistrar" class="btn-primary">Registrarse</button>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <form method="POST">
-            <h2>Registro del cliente:</h2>
-            {% csrf_token %}
-            <input class="form-control" type="text" name="nombre" placeholder="Nombre cliente" required>
-            <input class="form-control" type="text" name="apellido" placeholder="Apellido cliente" required>
-            <input class="form-control" type="text" name="cedula" placeholder="Cédula cliente" required>
-            <button type="submit" class="btn btn-primary">Ingresar</button>
-        </form>
     </main>
-    {% endblock  %}
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    {% endblock %}
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="{% static 'js/cliente_sesion.js' %}"></script>
 </body>
-
 </html>

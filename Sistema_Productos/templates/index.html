@@ -1,25 +1,139 @@
 {% extends "Cliente_sesion.html" %}
 {% load static %}
 
+{% block extra_styles %}
+
+{% endblock %}
+
 {% block main %}
-<link rel="stylesheet" href="{% static 'colors.css' %}">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
+        
+        const cards = document.querySelectorAll('.animate-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
     });
+
+    function goToHistorial() {
+        window.location.href = "{% url 'historial' %}"; 
+    }
 </script>
 
 <div class="container-fluid">
     <div class="row">
-        {%  include "navbar.html" %}
+        {% include "navbar.html" %}
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             {% block content %}
+            <!-- Sección Hero -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">Bienvenido a FastSHOP</h1>
+                    <p class="hero-subtitle">Descubre los mejores productos al mejor precio. Envíos rápidos y atención personalizada las 24 horas.</p>
+                    <div class="product-body">
+                        <h3 class="product-title">Historial de Compras</h3>
+                        <p class="product-price">Revisa tus pedidos anteriores</p>
+                        <a class="product-btn" href="{% url 'historial' %}"> 
+                            <i data-lucide="history"></i>
+                            Ver historial
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de características -->
+            <section class="features-section">
+                <h2 class="section-title">¿Por qué elegirnos?</h2>
+                <div class="row g-4">
+                    <div class="col-md-4 animate-card">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-lucide="truck"></i>
+                            </div>
+                            <h3 class="feature-title">Envío Rápido</h3>
+                            <p class="feature-text">Recibe tus productos en menos de 24 horas en toda la ciudad. Entregas seguras y confiables.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 animate-card">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <h3 class="feature-title">Pago Seguro</h3>
+                            <p class="feature-text">Transacciones protegidas con encriptación SSL. Múltiples métodos de pago disponibles.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 animate-card">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-lucide="headphones"></i>
+                            </div>
+                            <h3 class="feature-title">Soporte 24/7</h3>
+                            <p class="feature-text">Nuestro equipo está disponible para ayudarte en cualquier momento del día.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Muestra de productos -->
+            <section class="product-showcase">
+                <div class="container">
+                    <h2 class="section-title">Productos Destacados</h2>
+                    <div class="row g-4">
+                        <div class="col-md-4 animate-card">
+                            <div class="product-card">
+                                <div class="product-img-container">
+                                    <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12" alt="Producto 1" class="product-img">
+                                </div>
+                                <div class="product-body">
+                                    <h3 class="product-title">Harina Premium</h3>
+                                    <div class="product-price">$12.99</div>
+                                    <button class="product-btn">
+                                        <i data-lucide="shopping-cart"></i>
+                                        Añadir al carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 animate-card">
+                            <div class="product-card">
+                                <div class="product-img-container">
+                                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" alt="Producto 2" class="product-img">
+                                </div>
+                                <div class="product-body">
+                                    <h3 class="product-title">Jamón Serrano</h3>
+                                    <div class="product-price">$18.99</div>
+                                    <button class="product-btn">
+                                        <i data-lucide="shopping-cart"></i>
+                                        Añadir al carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 animate-card">
+                            <div class="product-card">
+                                <div class="product-img-container">
+                                    <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb" alt="Producto 3" class="product-img">
+                                </div>
+                                <div class="product-body">
+                                    <h3 class="product-title">Chucherías Variadas</h3>
+                                    <div class="product-price">$8.99</div>
+                                    <button class="product-btn">
+                                        <i data-lucide="shopping-cart"></i>
+                                        Añadir al carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             {% endblock %}
         </main>
     </div>
 </div>
 
 <script src="{% static 'js/carrito.js' %}"></script>
-
 {% endblock %}

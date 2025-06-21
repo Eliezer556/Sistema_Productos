@@ -1,0 +1,71 @@
+
+    body {
+        background: linear-gradient(to bottom right, #e0f7ff, #cfe9f1);
+    }
+
+    .content {
+        padding: 2rem;
+        background-color: #ffffffee;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        margin: 2rem auto;
+        max-width: 800px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    form {
+        background: #f0faff;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-top: 2rem;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #064579;
+        margin-top: 1rem;
+        display: block;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        border: 1px solid #b3d9ea;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: border 0.3s;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: #2196f3;
+        outline: none;
+        box-shadow: 0 0 5px #2196f3aa;
+    }
+
+    .btn {
+        background: linear-gradient(to right, #2196f3, #21cbf3);
+        border: none;
+        border-radius: 30px;
+        padding: 0.6rem 2rem;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .btn:hover {
+        background: linear-gradient(to right, #1a73e8, #1bcbe8);
+        transform: scale(1.03);
+    }
+
+    img {
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-left: 1rem;
+    }

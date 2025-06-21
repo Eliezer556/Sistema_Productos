@@ -1,0 +1,166 @@
+{% extends "Cliente_sesion.html" %}
+{% load static %}
+
+{% block extra_styles %}
+<style>
+    .historial-container {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .compra-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        border-left: 4px solid #0d6efd;
+    }
+    .compra-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .compra-header {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .producto-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px dashed #eee;
+        align-items: center;
+    }
+    .badge-estado {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+    .producto-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+    .producto-info {
+        display: flex;
+        align-items: center;
+    }
+    .total-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+
+<div class="container-fluid">
+    <div class="row">
+        {% include "navbar.html" %}
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i data-lucide="history" class="me-2"></i>Historial de Compras</h1>
+            </div>
+
+            <div class="historial-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1"><i data-lucide="user" class="me-2"></i>{{ cliente.name }} {{ cliente.apellido }}</h3>
+                        <p class="text-muted mb-0"><i data-lucide="shopping-bag" class="me-2"></i>Mis compras realizadas</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-primary p-2">
+                            <i data-lucide="package" class="me-1"></i>
+                            {{ compras_usuario|length }} compra{{ compras_usuario|length|pluralize }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if compras_usuario %}
+                    {% for compra in compras_usuario %}
+                    <div class="compra-card">
+                        <div class="compra-header">
+                            <div>
+                                <h4 class="mb-0"><i data-lucide="package" class="me-2"></i>Compra #{{ compra.id }}</h4>
+                                <small class="text-muted">
+                                    <i data-lucide="calendar" class="me-1"></i>
+                                    {{ compra.fecha|date:"d/m/Y H:i" }}
+                                </small>
+                            </div>
+                            <span class="badge bg-{% if compra.estado == 'C' %}success{% elif compra.estado == 'P' %}warning{% elif compra.estado == 'E' %}info{% else %}danger{% endif %} badge-estado">
+                                {{ compra.get_estado_display }}
+                            </span>
+                        </div>
+
+                        <div class="compra-body">
+                            <h5 class="mb-3"><i data-lucide="list" class="me-2"></i>Productos comprados:</h5>
+                            
+                            {% for detalle in compra.detalles.all %}
+                            <div class="producto-item">
+                                <div class="producto-info">
+                                    {% if detalle.producto.imagen %}
+                                    <img src="{{ detalle.producto.imagen.url }}" alt="{{ detalle.producto.nombre }}" class="producto-img">
+                                    {% else %}
+                                    <img src="{% static 'img/default-product.png' %}" alt="Producto" class="producto-img">
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ detalle.producto.nombre }}</strong>
+                                        <div class="text-muted small">Cantidad: {{ detalle.cantidad }}</div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div>${{ detalle.precio_unitario|floatformat:2 }} c/u</div>
+                                    <div class="fw-bold">${{ detalle.subtotal|floatformat:2 }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <div class="total-box">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i data-lucide="credit-card" class="me-2"></i>
+                                        <strong>Método de pago:</strong> {{ compra.metodo_pago }}
+                                    </div>
+                                    <div class="text-end">
+                                        <h5 class="mb-0">
+                                            <span class="text-muted me-2">Total pagado:</span>
+                                            <span class="text-primary">${{ compra.total|floatformat:2 }}</span>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info d-flex align-items-center">
+                        <i data-lucide="info" class="me-2"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1">No tienes compras registradas</h5>
+                            <p class="mb-0">Cuando realices una compra, aparecerá en este historial.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="{% static 'js/carrito.js' %}"></script>
+{% endblock %}

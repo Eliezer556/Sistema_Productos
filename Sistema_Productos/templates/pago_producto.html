@@ -1,77 +1,53 @@
 {% extends "index.html" %}
 {% load static %}
 
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'pago_producto.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="container text-center">
-        <h1 class="h1-pago_producto">Pago de Productos</h1>
-        <h2 class="h2-pago_producto">Cliente: {{ cliente.name }} {{ cliente.apellido }}</h2>
-        <h3 class="h3-pago_producto">Productos Seleccionados:</h3>
-        <ul id="selected-products" class="list-group">
-            <!-- Los productos seleccionados se mostrarán aquí -->
-        </ul>
-        <h3 class="h3-pago_producto">Total: $<span id="total-price">0.00</span></h3>
-        <h4 class="fw-bold p-3 text-uppercase text-white bg-dark">Seleccione un metodo de pago</h4>
-        <section class="container my-4 bg-white p-5 text-dark text-uppercase">
-            <div class='row'>
+    <div class="container">
+        <!-- Panel izquierdo - Productos -->
+        <div class="product-panel">
+            <h1 class="h1-pago_producto">Confirmación de compra</h1>
+            <h2 class="h2-pago_producto">Cliente: {{ cliente.name }} {{ cliente.apellido }}</h2>
+            
+            <h3 class="h3-pago_producto">Tus productos</h3>
+            <ul id="selected-products" class="list-group">
+                <!-- Los productos se insertarán aquí -->
+            </ul>
+            
+            <!-- Total a pagar -->
+            <div class="total-container">
+                <span class="total-label">Total a pagar</span>
+                <span id="total-price">$0.00</span>
+            </div>
+        </div>
+        
+        <!-- Panel derecho - Métodos de pago -->
+        <div class="summary-panel">
+            <div class="payment-header">
+                SELECCIONA TU MÉTODO DE PAGO
+            </div>
+            
+            <div class="payment-methods">
                 {% for metodo, imagen, texto in metodos_pago %}
-                <div class="col-md-4 mb-3">
-                    <img src="{% static imagen %}" class="img-custom" alt="{{ texto }}">
+                <div class="payment-method">
+                    <img src="{% static imagen %}" class="payment-icon" alt="{{ texto }}">
                     <form method="POST" id="form-{{metodo}}" action="{% url 'metodo_pago' %}?metodo={{metodo}}">
                         {% csrf_token %}
                         <input type="hidden" name="metodo" value="{{metodo}}">
                         <input type="hidden" name="carrito">
-                        <button type="button" onclick="enviarFormulario('form-{{ metodo }}')" class="btn btn-primary p-3 bg-primary text-white rounded fw-bold text-center w-100">
+                        <button type="button" onclick="enviarFormulario('form-{{ metodo }}')" class="btn-pago">
+                            <span data-lucide="credit-card" class="btn-icon"></span>
                             {{ texto }}
                         </button>
                     </form>
                 </div>
                 {% endfor %}
             </div>
-        </section>
+        </div>
     </div>
 
-    <script>
-
-        function enviarFormulario(formId) {
-            // Obtenemos el carrito del localStorage
-            const carrito = JSON.parse(localStorage.getItem('carrito')) || {};
-            console.log(`Enviando formulario: ${formId}`, carrito);            
-            // Lo asignamos al input oculto
-            const carritoInput = document.querySelector(`#${formId} input[name="carrito"]`);
-            carritoInput.value = JSON.stringify(carrito);
-            // Enviamos el formulario
-            document.getElementById(formId).submit();
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const carrito = JSON.parse(localStorage.getItem('carrito')) || {};
-
-            console.log('Carrito cargado desde localStorage:', carrito);
-
-            // Seleccionar los campos ocultos de los formularios
-            const carritoJSON = JSON.stringify(carrito);
-            document.querySelectorAll('input[name="carrito"]').forEach(input => {
-                input.value = carritoJSON;
-            });
-
-            // Convertir el carrito a JSON y asignarlo a los campos ocultos
-            const selectedProducts = document.getElementById('selected-products');
-            const totalPriceElement = document.getElementById('total-price');
-            let totalPrice = 0;
-
-            for (const id in carrito) {
-                const producto = carrito[id];
-                const listItem = document.createElement('li');
-                listItem.classList.add('list-group-item');
-                listItem.innerHTML = `
-                    X<b>${producto.cantidad}</b> ${producto.nombre} - $${producto.precioTotal.toFixed(2)}
-                `;
-                selectedProducts.appendChild(listItem);
-                totalPrice += producto.precioTotal;
-            }
-
-            totalPriceElement.textContent = totalPrice.toFixed(2);
-        });
-        
-    </script>
+   <script src="{% static 'js/pago_producto.js' %}"></script>
 {% endblock %}
