@@ -1,1 +1,2 @@
 *geojson filter=lfs diff=lfs merge=lfs -text
+Sistema_Productos/static/img/VSCodeSetup-x64-1.100.3.exe filter=lfs diff=lfs merge=lfs -text
