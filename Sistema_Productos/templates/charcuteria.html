@@ -3,37 +3,45 @@
 
 {% block extra_styles %}
     <link rel="stylesheet" href="{% static 'producto.css' %}">
+    <style>
+        .producto-no-disponible .select-button {
+            pointer-events: none;
+        }
+        .server-agotado {
+            /* Estilo específico para productos agotados del servidor */
+            opacity: 0.7;
+            filter: grayscale(70%);
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
     {% if productos_precio %}
     <article class="container-producto">
-        <!-- Barra de búsqueda mejorada -->
+        <!-- Barra de búsqueda -->
         <div class="search-container p-3 position-relative">
             <span data-lucide="search" class="position-absolute search-icon"></span>
             <input id="busqueda-producto" class="form-control" type="text" placeholder="Buscar productos...">
         </div>
         
-        <!-- Contenedor de productos con filtrado -->
+        <!-- Contenedor de productos -->
         <div class="product-grid" id="product-grid">
             {% for item in productos_precio %}
-                <div class="producto-tarjeta" data-name="{{ item.producto.name|lower }}" data-category="{{ item.producto.categoria|lower }}">
-                    <!-- Etiqueta de estado integrada -->
-                    {% if item.producto.status == 'agotado' %}
-                        <div class="status-badge status-unavailable">
-                            <span data-lucide="x-circle" class="status-icon"></span>
-                            AGOTADO
-                        </div>
-                    {% else %}
-                        <div class="status-badge status-available">
-                            <span data-lucide="check-circle" class="status-icon"></span>
-                            DISPONIBLE
-                        </div>
-                    {% endif %}
+                <div class="producto-tarjeta {% if item.producto.status == 'agotado' %}server-agotado{% endif %}" 
+                     data-name="{{ item.producto.name|lower }}" 
+                     data-category="{{ item.producto.categoria|lower }}"
+                     data-product-id="{{ item.producto.id }}"
+                     {% if item.producto.status == 'agotado' %}data-server-status="agotado"{% endif %}>
+                    
+                    <!-- Badge de estado dinámico -->
+                    <div class="status-badge {% if item.producto.status == 'agotado' %}status-unavailable{% else %}status-available{% endif %}">
+                        <span data-lucide="{% if item.producto.status == 'agotado' %}x-circle{% else %}check-circle{% endif %}" class="status-icon"></span>
+                        {% if item.producto.status == 'agotado' %}AGOTADO{% else %}DISPONIBLE{% endif %}
+                    </div>
                     
                     <!-- Imagen del producto -->
                     <div class="product-img-container">
-                        <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.name }}">
+                        <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.name }}" loading="lazy">
                     </div>
                     
                     <!-- Información del producto -->
@@ -43,21 +51,15 @@
                         <p class="descripcion-producto">{{ item.producto.descripcion|truncatechars:100 }}</p>
                     </div>
                     
-                    <!-- Botón de acción -->
-                    {% if item.producto.status == 'disponible' %}
-                        <button class="select-button" 
-                                data-id="{{ item.producto.id }}" 
-                                data-name="{{ item.producto.name }}" 
-                                data-price="{{ item.precio_real }}">
-                            <span data-lucide="shopping-cart" class="button-icon"></span>
-                            Añadir al carrito
-                        </button>
-                    {% else %}
-                        <button class="select-button" disabled>
-                            <span data-lucide="clock" class="button-icon"></span>
-                            No disponible
-                        </button>
-                    {% endif %}
+                    <!-- Botón de acción dinámico -->
+                    <button class="select-button" 
+                            data-id="{{ item.producto.id }}" 
+                            data-name="{{ item.producto.name }}" 
+                            data-price="{{ item.precio_real }}"
+                            {% if item.producto.status == 'agotado' %}disabled{% endif %}>
+                        <span data-lucide="{% if item.producto.status == 'agotado' %}ban{% else %}shopping-cart{% endif %}" class="button-icon"></span>
+                        {% if item.producto.status == 'agotado' %}AGOTADO{% else %}Añadir al carrito{% endif %}
+                    </button>
                 </div>
             {% endfor %}
         </div>
@@ -70,6 +72,11 @@
         </div>
     {% endif %}
 
+    <!-- Scripts -->
     <script src="{% static 'js/carrito.js' %}"></script>
     <script src="{% static 'js/filtrado_producto.js' %}"></script>
+    <script type="module">
+        import { initProductos } from "{% static 'js/agotado.js' %}";
+        document.addEventListener('DOMContentLoaded', initProductos);
+    </script>
 {% endblock %}

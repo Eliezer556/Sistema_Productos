@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from .models import Producto, Cliente, Compra, Compra_Detalle, Categoria_Producto
 from django.http import HttpResponseRedirect
 from datetime import datetime  
@@ -149,14 +150,51 @@ def factura(request):
         'total': total,
     })
 
+def obtener_materia_prima(request, producto_id):
+    try:
+        producto = Producto.objects.get(id=producto_id)
+        
+        if not producto.materia_prima:
+            return JsonResponse({
+                'materia_prima_disponible': float('inf'),
+                'unidades_posibles': float('inf'),
+                'mensaje': ''
+            })
+        
+        materia_prima = producto.materia_prima
+        contenido_neto = producto.contenido_neto or 1.0
+        
+        # Calcular unidades posibles basadas en materia prima disponible
+        unidades_posibles = int(materia_prima.cantidad_disponible / contenido_neto) if contenido_neto > 0 else 0
+        
+        return JsonResponse({
+            'materia_prima_disponible': float(materia_prima.cantidad_disponible),
+            'unidades_posibles': unidades_posibles,
+            'mensaje': ''
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e)
+        }, status=400)
+
 def historial(request):
     if 'cliente_id' not in request.session:
         return HttpResponseRedirect('Cliente_Sesion')
     
     cliente = get_cliente_from_session(request)
     compras_usuario = Compra.objects.filter(cliente=cliente).order_by('-fecha')
+
+    # total de cada compra
+    compras_con_total = []
+    for compra in compras_usuario:
+        compras_con_total.append({
+            'compra': compra,
+            'total': compra.precio_total  # Usando la propiedad que ya existe en tu modelo
+        })
     
     return render(request, 'historial.html', {
         'cliente': cliente,
-        'compras_usuario': compras_usuario
+        'compras_usuario': compras_usuario,
+        'compras_con_total': compras_con_total,
     })

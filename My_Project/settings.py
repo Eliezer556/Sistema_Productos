@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv  # Añade esto al inicio
+
+# Cargar variables de entorno
+load_dotenv()
 #static img
 
 
@@ -79,16 +83,21 @@ WSGI_APPLICATION = 'My_Project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Database
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'Sistema_Productos',
-            'USER': 'root',
-            'PASSWORD': '',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'Sistema_Productos'),  # Valor por defecto si no existe la variable
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),  # Cadena vacía como valor por defecto
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # Recomendado para MySQL
+            'charset': 'utf8mb4',  # Para soportar caracteres especiales
+        },
     }
+}
 
 
 # Password validation
@@ -137,3 +146,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-$5q1%su_xni1h1ii6qx&+_f-lg+y5q265kn^7gzpj##x!_fb^i')  # Nunca subas esto a producción
+
+# Debug mode seguro
+DEBUG = os.getenv('DEBUG', 'True') == 'True'  # Solo será True si en .env está DEBUG=True
+
+# Configuración segura para allowed hosts
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
